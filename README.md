@@ -1,3 +1,3 @@
 ## CSES
 
-CSES Problemset solutions
+CSES Problemset Solutions
