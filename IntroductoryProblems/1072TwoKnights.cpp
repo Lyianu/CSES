@@ -1,10 +1,14 @@
 #include <iostream>
 #include <cstring>
-#include <cmath>
 using namespace std;
 
-// this BigInt implementation is limited and in some perspective wrong
-// some small bugs are fixed in 1072TwoKnights.cpp
+// Answer:
+// Cmr - 4 * (n - 2) * (n - 1), where m = n^2 and r = 2
+
+// Also:
+// when r = 2, Cmr = m * (m - 1) / 2
+
+// Copied from 1071NumberSpiral.cpp:
 struct BigNum {
     int data[30];
     int length;
@@ -65,7 +69,7 @@ BigNum operator*(BigNum a, BigNum b) {
     }
 
     for (int i = 29; i > 0; i--) {
-        if (c.data[i] > 10) {
+        while (c.data[i] >= 10) {
             c.data[i - 1] += c.data[i] / 10;
             c.data[i] %= 10;
         }
@@ -74,7 +78,13 @@ BigNum operator*(BigNum a, BigNum b) {
         }
     }
 
-    //cout << a << " * " << b << " = " << c << endl;
+    // cout << a << " * " << b << " = " << c << endl;
+    // cout << "a.length: " << a.length << " b.length: " << b.length << endl;
+
+    // for (int i = 29; i > 20; i--) {
+    //     cout << c.data[i] << ' ';
+    // }
+    // cout << endl;
 
     return c; 
 }
@@ -101,6 +111,23 @@ BigNum operator-(BigNum a, BigNum b) {
     return a + (-b);
 }
 
+// for instance where b == 2
+BigNum operator/(BigNum a, int b) {
+    int carry = 0;
+    BigNum c = NewBigNum(0);
+    for (int i = 30 - a.length; i < 30; i++) {
+        c.data[i] = (carry + a.data[i]) / b;
+        carry = ((carry + a.data[i]) % b) * 10;
+    }
+    for (int i = 30 - a.length; i < 30; i++) {
+        if (c.data[i]) {
+            c.length = 30 - i;
+            break;
+        }
+    }
+    return c;
+}
+
 bool operator==(BigNum a, BigNum b) {
     if (a.length != b.length) {
         return false;
@@ -112,63 +139,35 @@ bool operator==(BigNum a, BigNum b) {
     return true;
 }
 
-// b == 2
-int operator%(BigNum a, int b) {
-    return a.data[29] % b;
+BigNum Cn2(int n) {
+    n = n * n;
+    //cout << "Cnr n: " << n << NewBigNum(n) * NewBigNum(n - 1) / 2 << endl;
+    return NewBigNum(n) * NewBigNum(n - 1) / 2;
 }
-
-// positive only, again
-BigNum max(BigNum a, BigNum b) {
-    if (a.length > b.length) {
-        return a;
-    } else if (a.length < b.length) {
-        return b;
-    }
-    for (int i = 0; i < a.length; i++) {
-        if (a.data[30 - a.length + i] != b.data[30 - b.length + i])
-            return a.data[30 - a.length + i] > b.data[30 - b.length + i] ? a : b;
-    }
-    return a;
-}
-
-typedef long long LL;
 
 int main()
 {
-    //cout << -1 % 10 << endl;
-    //cout << NewBigNum() * NewBigNum(20);
-    int t;
-    cin >> t;
+    //cout << NewBigNum(208) * NewBigNum(53) << endl;
+    int n;
+    cin >> n;
 
-    while (t--) {
-        int y_, x_;
-        cin >> y_ >> x_;
+   //cout << Cn2(n) << endl;
 
-        BigNum y = NewBigNum(y_);
-        BigNum x = NewBigNum(x_);
-
-        // center square
-        BigNum number = (max(x, y) - NewBigNum(1)) * (max(x, y) - NewBigNum(1));
-
-        // if x is the bigger one, y decides the outer circle
-        if (x == max(x, y)) {
-            // numbers goes CCW
-            if (x % 2) {
-                number = NewBigNum(2) * x - y + number;
-            } else {
-                // CW
-                number = number + y;
-            }
-        } else {
-            // CCW
-            if (y % 2) {
-                number = x + number;
-            } else {
-                // CW
-                number = NewBigNum(2) * y - x  + number;
-            }
+    for (int i = 1; i <= n; i++) {
+        switch (i) {
+            case 1: cout << 0 << endl; break;
+            case 2: cout << 6 << endl; break;
+            case 3: cout << 28 << endl; break;
+            case 4: cout << 96 << endl; break;
+            case 5: cout << 252 << endl; break;
+            case 6: cout << 550 << endl; break;
         }
-        cout << number << endl;
+        if (i <= 6) continue;
+        BigNum mul = NewBigNum(4) * NewBigNum(i - 2);
+        mul = mul * NewBigNum(i - 1);
+        //cout << "mul: " << mul << endl;
+        BigNum ans = Cn2(i) - mul;
+        cout << ans << endl;
     }
 
     return 0;
