@@ -126,6 +126,7 @@ BigNum max(BigNum a, BigNum b) {
         if (a.data[30 - a.length + i] != b.data[30 - b.length + i])
             return a.data[30 - a.length + i] > b.data[30 - b.length + i] ? a : b;
     }
+    return a;
 }
 
 typedef long long LL;
