@@ -8,6 +8,8 @@ struct BigNum {
     int length;
 };
 
+BigNum NewBigNum(int);
+
 ostream& operator<<(ostream& os, BigNum bn) {
     if (bn.data[30 - bn.length] < 0) {
         os << '-';
@@ -24,7 +26,7 @@ BigNum operator+(BigNum a, BigNum b) {
     c.length = max(a.length, b.length);
     for (int i = 0; i < c.length; i++) {
         int bit = 29 - i;
-        c.data[bit] = a.data[bit] + b.data[bit];
+        c.data[bit] = a.data[bit] + b.data[bit] + c.data[bit];
         if (c.data[bit] >= 0) {
             c.data[bit - 1] = c.data[bit] / 10;
             c.data[bit] %= 10;
@@ -44,8 +46,6 @@ BigNum operator+(BigNum a, BigNum b) {
             c.length = 0;
         }
     }
-
-    //cout << a << " + " << b << " = " << c << endl;
 
     return c;
 }
@@ -122,7 +122,10 @@ BigNum max(BigNum a, BigNum b) {
     } else if (a.length < b.length) {
         return b;
     }
-    return a.data[30 - a.length] > b.data[30 - b.length] ? a : b;
+    for (int i = 0; i < a.length; i++) {
+        if (a.data[30 - a.length + i] != b.data[30 - b.length + i])
+            return a.data[30 - a.length + i] > b.data[30 - b.length + i] ? a : b;
+    }
 }
 
 typedef long long LL;
@@ -130,7 +133,7 @@ typedef long long LL;
 int main()
 {
     //cout << -1 % 10 << endl;
-    //cout << NewBigNum(20) * NewBigNum(20);
+    //cout << NewBigNum() * NewBigNum(20);
     int t;
     cin >> t;
 
@@ -147,8 +150,8 @@ int main()
         // if x is the bigger one, y decides the outer circle
         if (x == max(x, y)) {
             // numbers goes CCW
-            if (x.data[29] % 2) {
-                number = NewBigNum(2) * x - y - NewBigNum(1) + number;
+            if (x % 2) {
+                number = NewBigNum(2) * x - y + number;
             } else {
                 // CW
                 number = number + y;
@@ -159,13 +162,10 @@ int main()
                 number = x + number;
             } else {
                 // CW
-                number = NewBigNum(2) * y - x - NewBigNum(1) + number;
+                number = NewBigNum(2) * y - x  + number;
             }
         }
-        if (y_ == x_) {
-            number = number - NewBigNum(1);
-        }
-        cout << number + NewBigNum(1) << endl;
+        cout << number << endl;
     }
 
     return 0;
