@@ -1,5 +1,12 @@
 *.exe
 
+# Unfinished
+2431DigitQueries.cpp
+1625GridPaths.cpp
+
+# Temporary files
+1.txt
+
 # VS Code
 .vscode/*
 !.vscode/settings.json
