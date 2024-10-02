@@ -1,4 +1,5 @@
 *.exe
+a.out
 
 # Unfinished
 2431DigitQueries.cpp
